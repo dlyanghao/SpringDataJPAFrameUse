@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd"
+        > <!-- bean definitions here -->
+
+    <!--Spring配置-->
+        <!--可选配置-->
+        <context:property-placeholder location="classpath:db.properties"/><!--Spring工厂的后置处理器-->
+        <!--使用Spring bean组件注解扫描-->
+        <context:component-scan base-package="com.yanghao.*"/>
+        <!--开启事务注解扫描-->
+        <tx:annotation-driven transaction-manager="transactionManager"/>
+        <!--开启AOP注解扫描-->
+        <!--<aop:aspectj-autoproxy/>-->
+
+
+
+        <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+        <!--<tx:advice id="advice" transaction-manager="transactionManager">-->
+            <!--<tx:attributes>-->
+                <!--<tx:method name="*Service"/>-->
+            <!--</tx:attributes>-->
+        <!--</tx:advice>&lt;!&ndash;对当前的方法进行事务管理&ndash;&gt;-->
+        <!--&lt;!&ndash;Aop&ndash;&gt;-->
+        <!--<aop:config>-->
+            <!--<aop:pointcut id="aopAdvice" expression="execution(* com.yanghao.serviceImpl.*.*(..))"/>-->
+            <!--<aop:advisor advice-ref="advice" pointcut-ref="aopAdvice"/>-->
+        <!--</aop:config>-->
+
+    <!--模块Bean-->
+        <!--Control-->
+        <!--<bean id="userAction" class="com.yanghao.web.action.UserAction" scope="prototype">-->
+            <!--<property name="userService" ref="userService"/>-->
+        <!--</bean>-->
+        <!--Service-->
+        <!--<bean id="userService" class="com.yanghao.serviceImpl.UserServiceImpl">-->
+            <!--<property name="userDao" ref="userDao"/>-->
+        <!--</bean>-->
+        <!--DAO-->
+        <!--<bean id="userDao" class="com.yanghao.daoImpl.UserDaoImpl">-->
+            <!--<property name="sessionFactory" ref="sessionFactoryBean"/>-->
+        <!--</bean>-->
+
+
+
+    <!--整合Hibernate配置-->
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+            <property name="driverClass" value="${driverClass}"/>
+            <property name="jdbcUrl" value="${jdbcUrl}"/>
+            <property name="user" value="${user}"/>
+            <property name="password" value="${password}"/>
+        </bean><!--数据源配置-->
+    <!--使用Spring Data JPA （简化JPA开发的一个框架）操作实现JPA规范的数据库-->
+
+        <bean id="localContainerEntityManagerFactoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+            <property name="dataSource" ref="dataSource"></property>
+            <property name="packagesToScan" value="com.yanghao.bean"></property>
+            <property name="jpaVendorAdapter">
+                <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"></bean>
+            </property>
+            <property name="jpaProperties">
+                <props>
+                    <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                    <prop key="hibernate.show_sql">true</prop>
+                    <prop key="hibernate.format_sql">true</prop>
+                    <prop key="hibernate.hbm2ddl.auto">update</prop>
+                </props>
+            </property>
+        </bean>
+    <!--<bean id="sessionFactoryBean" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">-->
+            <!--&lt;!&ndash;必选配置&ndash;&gt;-->
+            <!--<property name="dataSource" ref="dataSource"/>-->
+            <!--&lt;!&ndash;可选配置&ndash;&gt;-->
+            <!--<property name="hibernateProperties">-->
+                <!--<props>-->
+                    <!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>-->
+                    <!--<prop key="hibernate.show_sql">true</prop>-->
+                    <!--<prop key="hibernate.format_sql">true</prop>-->
+                    <!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+                <!--</props>-->
+            <!--</property>-->
+            <!--&lt;!&ndash;映射配置&ndash;&gt;-->
+            <!--&lt;!&ndash;<property name="mappingDirectoryLocations" value="classpath:com/yanghao/bean"/>&ndash;&gt;-->
+        <!--</bean>-->
+    <!--事务控制-->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="localContainerEntityManagerFactoryBean"/>
+    </bean>
+    <!--配置Repository，指定dao层的位置，以便data jpa 创建这些接口的动态代理-->
+    <jpa:repositories base-package="com.yanghao.dao" entity-manager-factory-ref="localContainerEntityManagerFactoryBean"/>
+
+        <!--<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">-->
+            <!--<property name="sessionFactory" ref="sessionFactoryBean"/>-->
+        <!--</bean>-->
+</beans>
