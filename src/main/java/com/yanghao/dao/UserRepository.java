@@ -4,6 +4,7 @@ import com.yanghao.bean.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * BaseRepository
  * CRUD基础功能
  */
+@Transactional
 public interface UserRepository extends CrudRepository<User,Integer>{
 
     //查询所有

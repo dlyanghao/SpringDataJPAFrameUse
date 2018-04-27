@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="SpringDataJPAFrameUse:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="SpringDataJPAFrameUse.war">
-      <element id="artifact" artifact-name="SpringDataJPAFrameUse:war exploded" />
-    </root>
-  </artifact>
-</component>
